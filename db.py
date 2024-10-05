@@ -1,5 +1,6 @@
 import mysql.connector
 import config
+import sql_init
 
 class Db:
     def __init__(self):
@@ -14,9 +15,17 @@ class Db:
 
     def make_db(self) -> None:
         cursor = self.connection.cursor()
-        cursor.execute("CREATE DATABASE IF NOT EXISTS cs452_bank")
+        cursor.execute("CREATE DATABASE IF NOT EXISTS cs452_bank;")
+        cursor.execute("USE cs452_bank;")
         cursor.close()
 
     def make_tables(self) -> None:
         cursor = self.connection.cursor()
-        
+        try:
+            cursor.execute(sql_init.create_tables, multi=True)
+        except mysql.connector.Error as e:
+            print(e)
+        cursor.execute("SHOW TABLES")
+        for x in cursor:
+            print(x)
+        cursor.close()
