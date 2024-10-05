@@ -1,2 +1,2 @@
-# NaturalLanguageSQLProject
-Natural Language SQL Project for CS452
+# Natural Language SQL Project
+The purpose of this project is to assess the effectiveness of gpt-4o when it comes to generating SQL queries with zero-shot, single-domain, and cross-domain strategies. The database models a basic bank database that has User, Account, Transaction, and Beneficiary tables. The database will not model other relevant complexities in the field of online banking. The following is a schema representing our bank database:
