@@ -1,0 +1,62 @@
+{
+  "strategy": "zero_shot",
+  "prompt_prefix": "Give me a MySQL statement that answers the question. Only respond with MySQL syntax, and don't explain any errors.",
+  "results": [
+    {
+      "question": "Which two customers had the largest transaction?",
+      "sql": "\nSELECT U.Name, MAX(T.Amount) AS LargestTransaction\nFROM Transaction T\nJOIN Account A ON T.AccountID = A.AccountID\nJOIN User U ON A.UserID = U.UserID\nGROUP BY U.UserID\nORDER BY LargestTransaction DESC\nLIMIT 2;\n",
+      "raw_res": "[('Kelly Smith', Decimal('5000.00')), ('Ronald McDonald', Decimal('5000.00'))]",
+      "friendly_res": "The two customers who had the largest transaction were Kelly Smith and Ronald McDonald, each with a transaction amount of five thousand dollars.",
+      "error": "None"
+    },
+    {
+      "question": "Who has the lowest account balance?",
+      "sql": "\nSELECT User.Name, Account.Balance \nFROM User \nJOIN Account ON User.UserID = Account.UserID \nORDER BY Account.Balance ASC \nLIMIT 1;\n",
+      "raw_res": "[('Karen Hansen', Decimal('844.33'))]",
+      "friendly_res": "The result shows that Karen Hansen has the lowest account balance, which is $844.33.",
+      "error": "None"
+    },
+    {
+      "question": "Which user has the most transactions of every type?",
+      "sql": "\nSELECT UserID, COUNT(*) AS TransactionCount\nFROM Transaction\nGROUP BY UserID\nORDER BY TransactionCount DESC\nLIMIT 1;\n",
+      "raw_res": "[('Karen Hansen', Decimal('844.33'))]",
+      "friendly_res": "The result shows that Karen Hansen has the lowest account balance, which is $844.33.",
+      "error": "1054 (42S22): Unknown column 'UserID' in 'field list'"
+    },
+    {
+      "question": "Which user withdrew the most money overall?",
+      "sql": "\nSELECT u.Name, SUM(t.Amount) AS TotalWithdrawn\nFROM Transaction t\nJOIN Account a ON t.AccountID = a.AccountID\nJOIN User u ON a.UserID = u.UserID\nWHERE t.Type = 'Withdrawal'\nGROUP BY u.UserID\nORDER BY TotalWithdrawn DESC\nLIMIT 1;\n",
+      "raw_res": "[('Sarah Johnson', Decimal('1200.00'))]",
+      "friendly_res": "The result shows that Sarah Johnson is the user who withdrew the most money, totaling $1,200.00.",
+      "error": "None"
+    },
+    {
+      "question": "Which bank location and name has the most users?",
+      "sql": "\nSELECT b.Location, b.Name, COUNT(u.UserID) AS UserCount\nFROM Bank b\nJOIN User u ON b.BankID = u.BankID\nGROUP BY b.BankID\nORDER BY UserCount DESC\nLIMIT 1;\n",
+      "raw_res": "[('Provo_UT', 'Chase', 4)]",
+      "friendly_res": "The bank with the most users is Chase, located in Provo, Utah, and it has a total of four users.",
+      "error": "None"
+    },
+    {
+      "question": "Which bank has the most transactions?",
+      "sql": "\nSELECT b.Name, COUNT(t.TransactionID) AS TransactionCount\nFROM Bank b\nJOIN User u ON b.BankID = u.BankID\nJOIN Account a ON u.UserID = a.UserID\nJOIN Transaction t ON a.AccountID = t.AccountID\nGROUP BY b.BankID\nORDER BY TransactionCount DESC\nLIMIT 1;\n",
+      "raw_res": "[('Chase', 15)]",
+      "friendly_res": "It looks like the bank with the most transactions is Chase, with a total of 15 transactions.",
+      "error": "None"
+    },
+    {
+      "question": "Who deposited the most money into their account overall?",
+      "sql": "\nSELECT U.Name, SUM(T.Amount) AS TotalDeposited\nFROM Transaction T\nJOIN Account A ON T.AccountID = A.AccountID\nJOIN User U ON A.UserID = U.UserID\nWHERE T.Type = 'Deposit'\nGROUP BY U.UserID\nORDER BY TotalDeposited DESC\nLIMIT 1;\n",
+      "raw_res": "[('Kelly Smith', Decimal('9500.00'))]",
+      "friendly_res": "The person who deposited the most money into their account overall is Kelly Smith, with a total deposit of nine thousand five hundred dollars.",
+      "error": "None"
+    },
+    {
+      "question": "Are there any customers who chose not to add an email to their account?",
+      "sql": "\nSELECT * FROM User WHERE Email IS NULL;\n",
+      "raw_res": "[]",
+      "friendly_res": "It looks like all customers have provided their email addresses when setting up their accounts.",
+      "error": "None"
+    }
+  ]
+}

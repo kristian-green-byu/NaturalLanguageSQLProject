@@ -1,0 +1,62 @@
+{
+  "strategy": "single_domain_double_shot",
+  "prompt_prefix": "Which customer deposited the most money at one time?\nSELECT u.Name\nFROM Transaction t\nJOIN Account a ON t.AccountID = a.AccountID\nJOIN User u ON a.UserID = u.UserID\nWHERE t.Type = 'Deposit'\nORDER BY t.Amount DESC\nLIMIT 1;\nGive me a MySQL statement that answers the question. Only respond with MySQL syntax, and don't explain any errors.",
+  "results": [
+    {
+      "question": "Which two customers had the largest transaction?",
+      "sql": "\nSELECT u.Name\nFROM Transaction t\nJOIN Account a ON t.AccountID = a.AccountID\nJOIN User u ON a.UserID = u.UserID\nORDER BY t.Amount DESC\nLIMIT 2;\n",
+      "raw_res": "[('Ronald McDonald',), ('Kelly Smith',)]",
+      "friendly_res": "The two customers who had the largest transaction are Ronald McDonald and Kelly Smith.",
+      "error": "None"
+    },
+    {
+      "question": "Who has the lowest account balance?",
+      "sql": "\nSELECT u.Name\nFROM Account a\nJOIN User u ON a.UserID = u.UserID\nORDER BY a.Balance ASC\nLIMIT 1;\n",
+      "raw_res": "[('Karen Hansen',)]",
+      "friendly_res": "The person with the lowest account balance is Karen Hansen.",
+      "error": "None"
+    },
+    {
+      "question": "Which user has the most transactions of every type?",
+      "sql": "\nSELECT u.Name, COUNT(t.TransactionID) AS TransactionCount\nFROM Transaction t\nJOIN Account a ON t.AccountID = a.AccountID\nJOIN User u ON a.UserID = u.UserID\nGROUP BY u.UserID\nORDER BY TransactionCount DESC\nLIMIT 1;\n",
+      "raw_res": "[('Ronald McDonald', 5)]",
+      "friendly_res": "The user with the most transactions of every type is Ronald McDonald, and he has completed a total of 5 transactions.",
+      "error": "None"
+    },
+    {
+      "question": "Which user withdrew the most money overall?",
+      "sql": "\nSELECT u.Name\nFROM Transaction t\nJOIN Account a ON t.AccountID = a.AccountID\nJOIN User u ON a.UserID = u.UserID\nWHERE t.Type = 'Withdrawal'\nGROUP BY u.UserID\nORDER BY SUM(t.Amount) DESC\nLIMIT 1;\n",
+      "raw_res": "[('Sarah Johnson',)]",
+      "friendly_res": "The user who withdrew the most money overall is Sarah Johnson.",
+      "error": "None"
+    },
+    {
+      "question": "Which bank location and name has the most users?",
+      "sql": "\nSELECT b.Name, b.Location\nFROM Bank b\nJOIN User u ON b.BankID = u.BankID\nGROUP BY b.BankID\nORDER BY COUNT(u.UserID) DESC\nLIMIT 1;\n",
+      "raw_res": "[('Chase', 'Provo_UT')]",
+      "friendly_res": "The bank with the most users is Chase, and it\u2019s located in Provo, Utah.",
+      "error": "None"
+    },
+    {
+      "question": "Which bank has the most transactions?",
+      "sql": "\nSELECT b.Name\nFROM Bank b\nJOIN Account a ON b.BankID = a.BankID\nJOIN Transaction t ON a.AccountID = t.AccountID\nGROUP BY b.BankID\nORDER BY COUNT(t.TransactionID) DESC\nLIMIT 1;\n",
+      "raw_res": "[('Chase',)]",
+      "friendly_res": "It looks like Chase is the bank with the most transactions.",
+      "error": "None"
+    },
+    {
+      "question": "Who deposited the most money into their account overall?",
+      "sql": "\nSELECT u.Name\nFROM Transaction t\nJOIN Account a ON t.AccountID = a.AccountID\nJOIN User u ON a.UserID = u.UserID\nWHERE t.Type = 'Deposit'\nGROUP BY u.UserID\nORDER BY SUM(t.Amount) DESC\nLIMIT 1;\n",
+      "raw_res": "[('Kelly Smith',)]",
+      "friendly_res": "The person who deposited the most money into their account overall is Kelly Smith.",
+      "error": "None"
+    },
+    {
+      "question": "Are there any customers who chose not to add an email to their account?",
+      "sql": "\nSELECT COUNT(*) AS NoEmailCustomers\nFROM User\nWHERE Email IS NULL OR Email = '';\n",
+      "raw_res": "[(0,)]",
+      "friendly_res": "It looks like there are no customers who chose not to add an email to their account. Everyone has provided an email!",
+      "error": "None"
+    }
+  ]
+}
